@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoServer GetCapabilities</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- TimeDimension CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" />
+
+  <style>
+     #container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px; /* Space between map and legend */
+      margin: 20px auto; /* Center container horizontally */
+    }
+    #map {
+      height: 500px; /* Adjust height as needed */
+      width: 800px; /* Adjust width as needed */
+      border: 2px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 20px auto; /* Center the map horizontally */
+    }
+    #slider-container {
+      width: 800px;
+      margin: 10px auto;
+    }
+
+    #legend-container {
+      max-width: 200px;
+      text-align: center;
+    }
+
+    #legend-img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>GeoServer WMS Layers</h1>
+
+  <!-- Dropdown for layer selection -->
+  <select id="dropdown">
+    <option value="">-- Select an option --</option>
+  </select>
+
+  <!-- Generate Map Button -->
+  <button id="generateMap">Generate Map</button>
+
+  <!-- Container for map and legend -->
+  <div id="container">
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Legend Container -->
+    <div id="legend-container">
+      <h3></h3>
+      <div id="legend"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>
+  <script src="static/scripts.js"></script>
+</body>
+</html>
