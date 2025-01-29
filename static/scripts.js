@@ -2,6 +2,9 @@
 
 const workspace_dropdown = document.getElementById('workspace-dropdown');
 const layer_dropdown = document.getElementById('layer-dropdown');
+const request_service_dropdown = document.getElementById('request-service-dropdown');
+const request_workspace_dropdown = document.getElementById('request-workspace-dropdown');
+const request_layer_dropdown = document.getElementById('request-layer-dropdown');
 const generateMap = document.getElementById('generateMap');
 const map = L.map('map', {
   center: [39.8283, -98.5795],
@@ -33,6 +36,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const data = (await response.json()).sort((a,b)=> a.localeCompare(b));
     workspace_dropdown.innerHTML = '<option value="">-- Select a Workspace --</option>' + 
     data.map(workspaceName => `<option value="${workspaceName}">${workspaceName}</option>`).join('');
+
+    request_workspace_dropdown.innerHTML = '<option value="">-- Select a Workspace --</option>' + 
+    data.map(workspaceName => `<option value="${workspaceName}">${workspaceName}</option>`).join('');
 } 
   catch (error) {
     console.error('Error fetching workspaces:', error);
@@ -44,15 +50,33 @@ window.addEventListener('DOMContentLoaded', async () => {
 workspace_dropdown.addEventListener('change',  async () => {
 
   workspace = workspace_dropdown.options[workspace_dropdown.selectedIndex].text;
+  service = 'wms'
   // Clear the layer dropdown before fetching new data
 
-  const response = await fetch(`/get-layers?workspace=${workspace}`);
+  const response = await fetch(`/get-layers?service=${service}&workspace=${workspace}`);
   if (!response.ok) throw new Error(`Layer HTTP error! Status: ${response.status}`);
   const data = (await response.json()).sort((a,b)=> a.localeCompare(b));
   layer_dropdown.innerHTML = '<option value="">-- Select a Layer --</option>' + 
   data.map(layerName => `<option value="${layerName}">${layerName}</option>`).join('');
   });
 
+
+request_workspace_dropdown.addEventListener('change',  async () => {
+
+  service = request_service_dropdown.options[request_service_dropdown.selectedIndex].text;
+  workspace = request_workspace_dropdown.options[request_workspace_dropdown.selectedIndex].text;
+
+  console.log(service)
+  console.log(workspace)
+
+  // Clear the layer dropdown before fetching new data
+
+  const response = await fetch(`/get-layers?service=${service}&workspace=${workspace}`);
+  if (!response.ok) throw new Error(`Request Layer HTTP error! Status: ${response.status}`);
+  const data = (await response.json()).sort((a,b)=> a.localeCompare(b));
+  request_layer_dropdown.innerHTML = '<option value="">-- Select a Layer --</option>' + 
+  data.map(layerName => `<option value="${layerName}">${layerName}</option>`).join('');
+  });
 
 
 // Add an event listener for the "click" event

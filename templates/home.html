@@ -21,7 +21,7 @@
     @media (min-width: 768px) {
       #container {
         flex-direction: row;
-        justify-content: center;
+        justify-content: left;
         align-items: flex-start;
       }
     }
@@ -65,6 +65,21 @@
       border: 1px solid #ccc;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+
+    #tutorial-container {
+      max-width: 100%;
+      flex-direction:column;
+      align-items: flex-start;
+      padding: 10px;
+    }
+
+    @media (min-width: 768px) {
+      #tutorial-container {
+        flex-direction: row;
+        justify-content: right;
+        align-items: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
@@ -90,8 +105,31 @@
 
     <!-- Legend Container -->
     <div id="legend-container">
-      <h3></h3>
       <div id="legend"></div>
+    </div>
+
+    <!-- Tutorial Container -->
+    <div id="legend-container">
+      <h3>Geoserver API Request Builder</h3>
+      <h1></h1>
+      <h5> Select a Geoserver Service</h1>
+      <select id="request-service-dropdown">
+        <option value="option1">wms</option>
+        <option value="option2">wcs</option>
+        <option value="option3">wfs</option>
+      </select>
+      <h5> Select a Workspace</h1>
+      <select id="request-workspace-dropdown">
+        <option value=""></option>
+      </select>
+      <h5> Select a Layer</h1>
+      <select id="request-layer-dropdown">
+        <option value=""></option>
+      </select>
+      <h5> </h1>
+
+      <button id="generateMap">Generate Request</button>
+
     </div>
   </div>
 
