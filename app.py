@@ -27,35 +27,24 @@ def get_workspaces():
 def get_layers():
     workspace = request.args.get('workspace')
     url = f'https://wfas.firenet.gov/geoserver/{workspace}/ows?service=WMS&version=1.3.0&request=GetCapabilities'
-    try:  
-        # Fetch the GetCapabilities XML
+
+    try:
         response = requests.get(url)
         response.raise_for_status()
-        xml_content = response.text
 
-        # Parse the XML
-        root = ET.fromstring(xml_content)
-        namespaces = {'wms': 'http://www.opengis.net/wms'}  # Namespace for WMS
+        root = ET.fromstring(response.text)
+        namespaces = {'wms': 'http://www.opengis.net/wms'}
 
-        # Extract layer names
-        layer_names = []
-        for layer in root.findall('.//wms:Layer', namespaces):
-            name_element = layer.find('wms:Name', namespaces)
-            if name_element is not None:
-                layer_names.append(name_element.text)  # Add layer name to the list
+        # Extract layer names using list comprehension
+        layer_names = [layer.find('wms:Name', namespaces).text 
+                       for layer in root.findall('.//wms:Layer', namespaces) 
+                       if layer.find('wms:Name', namespaces) is not None]
 
-        # Return the layer names as a JSON response
         return jsonify(layer_names)
 
-    except requests.exceptions.RequestException as e:
+    except (requests.RequestException, ET.ParseError) as e:
         return jsonify({'error': str(e)}), 500
-    except ET.ParseError as e:
-        return jsonify({'error': f'Error parsing XML: {str(e)}'}), 500
 
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 500
-    except ET.ParseError as e:
-        return jsonify({'error': f'Error parsing XML: {str(e)}'}), 500
 
 
 
