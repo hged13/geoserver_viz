@@ -3,6 +3,25 @@ import xml.etree.ElementTree as ET
 from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
+# Define correct namespaces for different services
+Service_Namespaces = {
+    'wms': {
+        'namespace': 'http://www.opengis.net/wms',
+        'layer_xpath': './/ns:Layer',
+        'name_xpath': 'ns:Name'
+    },
+    'wfs': {
+        'namespace': 'http://www.opengis.net/wfs/2.0',
+        'layer_xpath': './/ns:FeatureType',
+        'name_xpath': 'ns:Name'
+    },
+    'wcs': {
+        'namespace': 'http://www.opengis.net/wcs/2.0',
+        'layer_xpath': './/ns:CoverageSummary',
+        'name_xpath': 'ns:CoverageId'
+    }
+}
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -25,25 +44,27 @@ def get_workspaces():
 
 @app.route('/get-layers', methods=['GET'])
 def get_layers():
+    service = request.args.get('service')
     workspace = request.args.get('workspace')
-    url = f'https://wfas.firenet.gov/geoserver/{workspace}/ows?service=WMS&version=1.3.0&request=GetCapabilities'
+    url = f'https://wfas.firenet.gov/geoserver/{workspace}/ows?service={service}&version=1.3.0&request=GetCapabilities'
 
     try:
         response = requests.get(url)
         response.raise_for_status()
 
         root = ET.fromstring(response.text)
-        namespaces = {'wms': 'http://www.opengis.net/wms'}
+        service_data = Service_Namespaces[service]
+        namespaces = {'ns': service_data['namespace']}
 
-        # Extract layer names using list comprehension
-        layer_names = [layer.find('wms:Name', namespaces).text 
-                       for layer in root.findall('.//wms:Layer', namespaces) 
-                       if layer.find('wms:Name', namespaces) is not None]
 
+        layer_names = [layer.find(service_data['name_xpath'], namespaces).text 
+        for layer in root.findall(service_data['layer_xpath'], namespaces) 
+        if layer.find(service_data['name_xpath'], namespaces) is not None]
         return jsonify(layer_names)
 
     except (requests.RequestException, ET.ParseError) as e:
         return jsonify({'error': str(e)}), 500
+    
 
 
 
