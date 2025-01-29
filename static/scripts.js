@@ -26,36 +26,20 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 
 // Automatically fetch and populate the dropdown when the page loads
-window.addEventListener('DOMContentLoaded', () => {
-  fetch('/get-workspaces')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      data = data.sort((a, b) => a.localeCompare(b));
-
-
-
-      // Clear the dropdown and populate it with the fetched layer names
-      workspace_dropdown.innerHTML = '<option value="">-- Select a Workspace --</option>'; // Add a placeholder option
-
-      // Use Object.keys to get layer names
-      data.forEach(layerName => {
-        
-        const option = document.createElement('option');
-        option.value = layerName; // Set the value attribute of the option
-        option.textContent = layerName; // Set the text displayed in the dropdown
-        workspace_dropdown.appendChild(option);
-      });
-    })
-    .catch(error => {
-      console.error('Error fetching layers:', error);
-      alert(`Error fetching layers: ${error.message}`);
-    });
+window.addEventListener('DOMContentLoaded', async () => {
+  try{
+    const response = await fetch('/get-workspaces');
+    if(!response.ok) throw new Error('HTTP error! Status: $(response.status)')
+    const data = (await response.json()).sort((a,b)=> a.localeCompare(b));
+    workspace_dropdown.innerHTML = '<option value="">-- Select a Workspace --</option>' +
+    data.map(workspaceName => `<option value="${workspaceName}">${workspaceName}</option>`).join('');
+} 
+  catch (error) {
+    console.error('Error fetching workspaces:', error);
+  }
 });
+
+
 
 workspace_dropdown.addEventListener('change',  () => {
 
