@@ -5,22 +5,30 @@ app = Flask(__name__)
 
 # Define correct namespaces for different services
 Service_Namespaces = {
-    'wms': {
+    'WMS': {
         'namespace': 'http://www.opengis.net/wms',
         'layer_xpath': './/ns:Layer',
         'name_xpath': 'ns:Name'
     },
-    'wfs': {
+    'WFS': {
         'namespace': 'http://www.opengis.net/wfs/2.0',
         'layer_xpath': './/ns:FeatureType',
         'name_xpath': 'ns:Name'
     },
-    'wcs': {
+    'WCS': {
         'namespace': 'http://www.opengis.net/wcs/2.0',
         'layer_xpath': './/ns:CoverageSummary',
         'name_xpath': 'ns:CoverageId'
     }
 }
+
+# Define version mapping
+service_versions = {
+    'WMS': '1.3.0',
+    'WFS': '2.0.0',
+    'WCS': '2.0.1'
+}
+
 
 @app.route('/')
 def home():
@@ -46,7 +54,9 @@ def get_workspaces():
 def get_layers():
     service = request.args.get('service')
     workspace = request.args.get('workspace')
-    url = f'https://wfas.firenet.gov/geoserver/{workspace}/ows?service={service}&version=1.3.0&request=GetCapabilities'
+    version = service_versions.get(service)
+    print(version)
+    url = f'https://wfas.firenet.gov/geoserver/{workspace}/ows?service={service}&version={version}&request=GetCapabilities'
 
     try:
         response = requests.get(url)
